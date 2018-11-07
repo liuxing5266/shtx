@@ -1,8 +1,11 @@
 /**
  * 将文件切片后上传
- * 使用切片名称上传，每一个都做为独立文件。后续获取文件时需要后台合成文件后再返回给前台。
+ *
+ * @author meteor
+ * @version 1.1
  * @param fileId 文件对象ID
  * @returns {boolean} 返回全部上传结果：true成功/false失败
+ * @see 使用切片名称上传，每一个都做为独立文件。后续需要后台合成文件后再使用。
  */
 function uploadFileSlicing(fileId) {
     // 每个文件切片大小定为1MB .
