@@ -8,9 +8,9 @@ function uploadFileSlicing(fileId) {
     // 每个文件切片大小定为1MB .
     var bytesPerPiece = 1024 * 1024;
     //文件切片总数
-    var totalPieces;
+    var totalPieces = 0;
     //上传成功计数器
-    var totalFinish=0;
+    var totalFinish = 0;
 
     //获取文件对象
     var blob = document.getElementById(fileId).files[0];
@@ -28,19 +28,31 @@ function uploadFileSlicing(fileId) {
     //计算文件切片总数
     totalPieces = Math.ceil(fileSize / bytesPerPiece);
     //循环处理
-    while(start < fileSize) {
+    while (start < fileSize) {
         //计算切片结束字节数
         end = start + bytesPerPiece;
         //如果切片结束字节数>文件字节数
-        if(end > fileSize) {
+        if (end > fileSize) {
             //设置切片结束字节数为文件字节数
             end = fileSize;
         }
 
         //切片文件对象
-        var chunk = blob.slice(start,end);
+        // var chunk = blob.slice(start,end);
+        var chunk;
+        if (blob.slice) {
+            chunk = blob.slice(start, end);
+        }
+        // 兼容firefox
+        if (blob.mozSlice) {
+            chunk = blob.mozSlice(start, end);
+        }
+        // 兼容webkit
+        if (blob.webkitSlice) {
+            chunk = blob.webkitSlice(start, end);
+        }
         //切片文件名称
-        var sliceIndex= fileName + index;
+        var sliceIndex = fileName + index;
         //切片文件数据对象
         var formData = new FormData();
 
@@ -57,10 +69,10 @@ function uploadFileSlicing(fileId) {
             data: formData,
             processData: false,
             contentType: false,
-        }).done(function(res){
+        }).done(function (res) {
             //上传成功后，上传成功计数器+1
             totalFinish++;
-        }).fail(function(res) {
+        }).fail(function (res) {
             //上传失败。
             console.log(res);
         });
@@ -71,10 +83,10 @@ function uploadFileSlicing(fileId) {
     }
 
     //上传成功计数器=文件切片总数
-    if(totalFinish===totalPieces){
+    if (totalFinish === totalPieces) {
         //成功
         return true;
-    }else{
+    } else {
         //失败
         return false;
     }
